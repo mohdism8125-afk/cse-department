@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h2><i class="bi bi-clock-history"></i> Detection History</h2>
+    <span class="badge bg-secondary">{{ predictions | length }} records</span>
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+        {% if predictions %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date & Time</th>
+                        <th>Src Port</th>
+                        <th>Dst Port</th>
+                        <th>Protocol</th>
+                        <th>Traffic</th>
+                        <th>Anomaly</th>
+                        <th>Severity</th>
+                        <th>Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for p in predictions %}
+                <tr>
+                    <td class="text-secondary">{{ loop.index }}</td>
+                    <td><small>{{ p['created_at'][:19] }}</small></td>
+                    <td>{{ p['source_port'] }}</td>
+                    <td>{{ p['dest_port'] }}</td>
+                    <td><span class="badge bg-secondary">{{ p['protocol'] }}</span></td>
+                    <td>{{ p['traffic_type'] }}</td>
+                    <td>{{ '%.2f' | format(p['anomaly_score']) }}</td>
+                    <td>
+                        {% if p['severity_level'] == 'Critical' %}
+                        <span class="badge" style="background:rgba(220,38,38,0.2);color:#dc2626;">Critical</span>
+                        {% elif p['severity_level'] == 'High' %}
+                        <span class="badge" style="background:rgba(249,115,22,0.2);color:#f97316;">High</span>
+                        {% elif p['severity_level'] == 'Medium' %}
+                        <span class="badge" style="background:rgba(234,179,8,0.2);color:#eab308;">Medium</span>
+                        {% else %}
+                        <span class="badge" style="background:rgba(34,197,94,0.2);color:#22c55e;">Low</span>
+                        {% endif %}
+                    </td>
+                    <td><span class="badge {{ 'badge-normal' if p['attack_type'] == 'Normal' else 'badge-attack' }}">{{ p['attack_type'] }}</span></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center text-secondary py-5">
+            <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+            <p class="mt-2">No detection records yet. <a href="/predict" class="text-accent">Run your first scan</a>.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

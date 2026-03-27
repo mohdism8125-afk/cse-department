@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}About{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="bi bi-info-circle"></i> About This Project</h2>
+</div>
+
+<div class="row g-4">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="text-accent mb-3">Enhancing Network Security: ML-Based Anomaly Detection</h4>
+                <p class="text-light">
+                    This system uses Machine Learning to analyze network traffic parameters and detect
+                    potential cyber attacks in real-time. By examining features such as packet characteristics,
+                    anomaly scores, protocol types, and security indicators, the Random Forest classifier
+                    can identify 6 types of network threats.
+                </p>
+                <p class="text-secondary">
+                    The model was trained on synthetic network traffic data that mimics real-world attack
+                    patterns — DDoS attacks show high anomaly scores and critical severity, malware traffic
+                    carries IoC (Indicators of Compromise), and intrusion attempts target SSH/FTP services.
+                </p>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0 text-accent">Attack Types Detected</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table mb-0">
+                    <thead><tr><th>Attack</th><th>Description</th><th>Key Indicators</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="badge" style="background:rgba(239,68,68,0.2);color:#ef4444;">DDoS</span></td>
+                            <td>Distributed Denial of Service — floods the target with traffic</td>
+                            <td>High anomaly score, Critical severity, IDS alerts triggered</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge" style="background:rgba(249,115,22,0.2);color:#f97316;">Intrusion</span></td>
+                            <td>Unauthorized access attempts via SSH, FTP, or other services</td>
+                            <td>SSH/FTP traffic, elevated anomaly score, High severity</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge" style="background:rgba(168,85,247,0.2);color:#a855f7;">Malware</span></td>
+                            <td>Malicious software communicating with command-and-control servers</td>
+                            <td>IoC Detected, moderate-high anomaly score</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge" style="background:rgba(234,179,8,0.2);color:#eab308;">Phishing</span></td>
+                            <td>Social engineering attacks disguised as legitimate traffic</td>
+                            <td>Suspicious activity patterns, varied anomaly scores</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge" style="background:rgba(220,38,38,0.2);color:#dc2626;">Ransomware</span></td>
+                            <td>Encryption-based extortion attacks targeting data</td>
+                            <td>High anomaly, suspicious indicators, elevated severity</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge badge-normal">Normal</span></td>
+                            <td>Legitimate network traffic — no threat detected</td>
+                            <td>Low anomaly (&lt;0.3), Low severity, No alerts, No IoC</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0 text-accent">Technology Stack</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="bi bi-check-circle text-accent me-2"></i><strong>Backend:</strong> Python, Flask</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-accent me-2"></i><strong>ML Model:</strong> Random Forest (scikit-learn)</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-accent me-2"></i><strong>Frontend:</strong> Bootstrap 5, Chart.js</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-accent me-2"></i><strong>Database:</strong> SQLite</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-accent me-2"></i><strong>Security:</strong> Werkzeug password hashing</li>
+                    <li class="mb-2"><i class="bi bi-check-circle text-accent me-2"></i><strong>Encoding:</strong> LabelEncoder (10 features)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0 text-accent">Features</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2"><i class="bi bi-shield-check text-accent me-2"></i>18-feature anomaly detection</li>
+                    <li class="mb-2"><i class="bi bi-bar-chart text-accent me-2"></i>Interactive analytics dashboard</li>
+                    <li class="mb-2"><i class="bi bi-clock-history text-accent me-2"></i>Full prediction history</li>
+                    <li class="mb-2"><i class="bi bi-lightbulb text-accent me-2"></i>Attack mitigation strategies</li>
+                    <li class="mb-2"><i class="bi bi-person-lock text-accent me-2"></i>User authentication</li>
+                    <li class="mb-2"><i class="bi bi-graph-up text-accent me-2"></i>Chart.js visualizations</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0 text-accent">Network Features (18)</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-wrap gap-1">
+                    {% for f in ['Source Port', 'Dest Port', 'Protocol', 'Packet Length', 'Packet Type', 'Traffic Type', 'Malware Indicators', 'Anomaly Score', 'Action Taken', 'Severity Level', 'Network Segment', 'Firewall Logs', 'IDS/IPS Alerts', 'Year', 'Month', 'Day', 'Hour', 'Day of Week'] %}
+                    <span class="badge bg-secondary mb-1">{{ f }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

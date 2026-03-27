@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}Detect Attack{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h2><i class="bi bi-search"></i> Network Traffic Analysis</h2>
+</div>
+
+{% if prediction_text %}
+<div class="alert {{ 'alert-danger' if 'Normal' not in prediction_text else 'alert-success' }} d-flex align-items-center mb-4" style="font-size: 1.1rem;">
+    <i class="bi {{ 'bi-exclamation-triangle-fill' if 'Normal' not in prediction_text else 'bi-check-circle-fill' }} me-2" style="font-size: 1.4rem;"></i>
+    <strong>{{ prediction_text }}</strong>
+</div>
+{% endif %}
+
+<form method="POST" action="/predict">
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-hdd-network"></i> Network Parameters</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Source Port</label>
+                    <input type="number" class="form-control" name="Source_Port" value="4532" min="0" max="65535" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Destination Port</label>
+                    <input type="number" class="form-control" name="Destination_Port" value="80" min="0" max="65535" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Protocol</label>
+                    <select class="form-select" name="Protocol">
+                        {% for p in protocols %}<option>{{ p }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Packet Length</label>
+                    <input type="number" class="form-control" name="Packet_Length" value="512" step="0.1" required>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-filter-circle"></i> Traffic Classification</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label">Packet Type</label>
+                    <select class="form-select" name="Packet_Type">
+                        {% for p in packet_types %}<option>{{ p }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Traffic Type</label>
+                    <select class="form-select" name="Traffic_Type">
+                        {% for t in traffic_types %}<option>{{ t }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Malware Indicators</label>
+                    <select class="form-select" name="Malware_Indicators">
+                        {% for m in malware_indicators %}<option>{{ m }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-shield-exclamation"></i> Security Indicators</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Anomaly Score</label>
+                    <input type="number" class="form-control" name="Anomaly_Scores" value="0.5" step="0.01" min="0" max="1" required>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Action Taken</label>
+                    <select class="form-select" name="Action_Taken">
+                        {% for a in actions %}<option>{{ a }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Severity Level</label>
+                    <select class="form-select" name="Severity_Level">
+                        {% for s in severity_levels %}<option>{{ s }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Network Segment</label>
+                    <select class="form-select" name="Network_Segment">
+                        {% for n in network_segments %}<option>{{ n }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Firewall Logs</label>
+                    <select class="form-select" name="Firewall_Logs">
+                        {% for f in firewall_logs %}<option>{{ f }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">IDS/IPS Alerts</label>
+                    <select class="form-select" name="IDS_IPS_Alerts">
+                        {% for i in ids_ips_alerts %}<option>{{ i }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-calendar-event"></i> Timestamp</h5>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col">
+                    <label class="form-label">Year</label>
+                    <input type="number" class="form-control" name="Year" value="2025" required>
+                </div>
+                <div class="col">
+                    <label class="form-label">Month</label>
+                    <input type="number" class="form-control" name="Month" value="1" min="1" max="12" required>
+                </div>
+                <div class="col">
+                    <label class="form-label">Day</label>
+                    <input type="number" class="form-control" name="Day" value="15" min="1" max="31" required>
+                </div>
+                <div class="col">
+                    <label class="form-label">Hour</label>
+                    <input type="number" class="form-control" name="Hour" value="14" min="0" max="23" required>
+                </div>
+                <div class="col">
+                    <label class="form-label">Day of Week (0=Mon)</label>
+                    <input type="number" class="form-control" name="DayOfWeek" value="2" min="0" max="6" required>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-accent btn-lg w-100 py-3">
+        <i class="bi bi-shield-check"></i> Detect Attack Type
+    </button>
+</form>
+{% endblock %}

@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="page-header d-flex justify-content-between align-items-center">
+    <h2><i class="bi bi-speedometer2"></i> Security Dashboard</h2>
+    <a href="/predict" class="btn btn-accent"><i class="bi bi-search"></i> New Detection</a>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card p-3">
+            <div class="stat-label">Total Scans</div>
+            <div class="stat-value">{{ total }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card p-3" style="border-left-color: #ef4444;">
+            <div class="stat-label">Attacks Detected</div>
+            <div class="stat-value" style="color: #ef4444;">{{ attacks }}</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card p-3" style="border-left-color: #22c55e;">
+            <div class="stat-label">Normal Traffic</div>
+            <div class="stat-value" style="color: #22c55e;">{{ normal }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Attack Distribution -->
+    <div class="col-md-5">
+        <div class="card h-100">
+            <div class="card-header">
+                <h5 class="mb-0 text-accent"><i class="bi bi-pie-chart"></i> Attack Distribution</h5>
+            </div>
+            <div class="card-body">
+                {% if distribution %}
+                {% for row in distribution %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>
+                        <span class="badge {{ 'badge-normal' if row['attack_type'] == 'Normal' else 'badge-attack' }} me-2">{{ row['attack_type'] }}</span>
+                    </span>
+                    <div class="d-flex align-items-center" style="width: 60%;">
+                        <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                            <div class="progress-bar {{ 'bg-success' if row['attack_type'] == 'Normal' else 'bg-danger' }}"
+                                 style="width: {{ (row['cnt'] / total * 100) if total > 0 else 0 }}%"></div>
+                        </div>
+                        <small class="text-secondary">{{ row['cnt'] }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="text-secondary text-center my-4">No data yet. Run your first detection!</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Detections -->
+    <div class="col-md-7">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-accent"><i class="bi bi-clock-history"></i> Recent Detections</h5>
+                {% if recent %}<a href="/history" class="text-accent text-decoration-none" style="font-size: 0.85rem;">View All</a>{% endif %}
+            </div>
+            <div class="card-body p-0">
+                {% if recent %}
+                <div class="table-responsive">
+                    <table class="table table-sm mb-0">
+                        <thead><tr><th>Time</th><th>Protocol</th><th>Traffic</th><th>Anomaly</th><th>Result</th></tr></thead>
+                        <tbody>
+                        {% for p in recent %}
+                        <tr>
+                            <td><small>{{ p['created_at'][:16] }}</small></td>
+                            <td>{{ p['protocol'] }}</td>
+                            <td>{{ p['traffic_type'] }}</td>
+                            <td>{{ '%.2f' | format(p['anomaly_score']) }}</td>
+                            <td><span class="badge {{ 'badge-normal' if p['attack_type'] == 'Normal' else 'badge-attack' }}">{{ p['attack_type'] }}</span></td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-secondary text-center my-4">No detections yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row g-3 mt-3">
+    <div class="col-md-3">
+        <a href="/predict" class="card text-decoration-none p-3 text-center h-100">
+            <i class="bi bi-search text-accent" style="font-size: 1.5rem;"></i>
+            <div class="mt-2 text-light">Detect Attack</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="/history" class="card text-decoration-none p-3 text-center h-100">
+            <i class="bi bi-clock-history text-accent" style="font-size: 1.5rem;"></i>
+            <div class="mt-2 text-light">View History</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="/analytics" class="card text-decoration-none p-3 text-center h-100">
+            <i class="bi bi-bar-chart-line text-accent" style="font-size: 1.5rem;"></i>
+            <div class="mt-2 text-light">Analytics</div>
+        </a>
+    </div>
+    <div class="col-md-3">
+        <a href="/suggestions" class="card text-decoration-none p-3 text-center h-100">
+            <i class="bi bi-lightbulb text-accent" style="font-size: 1.5rem;"></i>
+            <div class="mt-2 text-light">Mitigations</div>
+        </a>
+    </div>
+</div>
+{% endblock %}

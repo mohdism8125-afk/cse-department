@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Network Security{% endblock %} — Anomaly Detection</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root { --accent: #00d4ff; --accent-hover: #00b8d4; --bg-dark: #0a0e1a; --bg-card: #111827; --bg-nav: #0d1117; }
+        body { background: var(--bg-dark); min-height: 100vh; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        .navbar { background: var(--bg-nav) !important; border-bottom: 1px solid rgba(0,212,255,0.15); }
+        .navbar-brand { color: var(--accent) !important; font-weight: 700; font-size: 1.15rem; }
+        .navbar-brand i { margin-right: 6px; }
+        .nav-link { color: #9ca3af !important; font-size: 0.9rem; transition: color 0.2s; }
+        .nav-link:hover, .nav-link.active { color: var(--accent) !important; }
+        .card { background: var(--bg-card); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; }
+        .card-header { background: rgba(0,212,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .btn-accent { background: var(--accent); color: #000; font-weight: 600; border: none; }
+        .btn-accent:hover { background: var(--accent-hover); color: #000; }
+        .btn-outline-accent { border: 1px solid var(--accent); color: var(--accent); }
+        .btn-outline-accent:hover { background: var(--accent); color: #000; }
+        .stat-card { border-left: 4px solid var(--accent); }
+        .stat-card .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+        .stat-card .stat-label { color: #9ca3af; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .text-accent { color: var(--accent) !important; }
+        .badge-attack { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .badge-normal { background: rgba(34,197,94,0.2); color: #22c55e; }
+        .table { --bs-table-bg: transparent; }
+        .table thead th { color: var(--accent); border-bottom: 1px solid rgba(0,212,255,0.2); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .table td { border-bottom: 1px solid rgba(255,255,255,0.05); vertical-align: middle; }
+        .form-control, .form-select { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); color: #e5e7eb; }
+        .form-control:focus, .form-select:focus { border-color: var(--accent); box-shadow: 0 0 0 0.2rem rgba(0,212,255,0.15); background: rgba(255,255,255,0.08); color: #fff; }
+        .form-select option { background: #1f2937; }
+        .alert { border-radius: 10px; }
+        footer { border-top: 1px solid rgba(255,255,255,0.06); }
+        .page-header { border-bottom: 1px solid rgba(0,212,255,0.1); padding-bottom: 0.75rem; margin-bottom: 1.5rem; }
+        .page-header h2 { color: var(--accent); font-weight: 700; }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="/home"><i class="bi bi-shield-lock-fill"></i>NetGuard AI</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="nav">
+                {% if session.get('user_id') %}
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'home' %}active{% endif %}" href="/home"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'predict' %}active{% endif %}" href="/predict"><i class="bi bi-search"></i> Detect</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'history' %}active{% endif %}" href="/history"><i class="bi bi-clock-history"></i> History</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'analytics' %}active{% endif %}" href="/analytics"><i class="bi bi-bar-chart-line"></i> Analytics</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'attack_suggestions' %}active{% endif %}" href="/suggestions"><i class="bi bi-lightbulb"></i> Mitigations</a></li>
+                    <li class="nav-item"><a class="nav-link {% if request.endpoint == 'about' %}active{% endif %}" href="/about"><i class="bi bi-info-circle"></i> About</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <span class="nav-link"><i class="bi bi-person-circle"></i> {{ session.get('username', 'User') }}</span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-danger" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+                    </li>
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="container py-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="text-center py-3 mt-4">
+        <small class="text-secondary">Network Security Anomaly Detection &mdash; ML-Based Cyber Attack Classification</small>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
